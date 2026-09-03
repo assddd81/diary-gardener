@@ -1,6 +1,14 @@
 ---
 name: diary-gardener
 description: 整理 Obsidian 日记的日常技能。读取日记 → 按白名单打标签 → 提炼知识卡片 → 挂 MOC → 建双链 → 规整待办 → 幂等标记。触发词：整理日记、整理昨天的日记、日记加工、处理日记、周回顾、weekly review、整理 Inbox。Use when the user asks to process/organize their Obsidian daily notes, do a weekly review of their vault, or tidy the 00 Inbox folder.
+license: MIT
+metadata:
+  author: assddd81
+  version: 1.1.0
+  created: 2026-09-03
+  last_reviewed: 2026-09-03
+  review_interval_days: 90
+  homepage: https://github.com/assddd81/diary-gardener
 ---
 
 # Diary Gardener — Obsidian 日记整理技能
@@ -78,8 +86,18 @@ obsidian append file="某主题 MOC" content="- [[新卡片名]]"
 3. 中文路径偶发在 Bash 里被编码损坏 → 验证文件存在与否用 Glob/Read 工具，别依赖 bash head/cat 中文路径。
 4. 日记的 tags 用 YAML 列表格式写：`tags:\n  - 想法\n  - 项目/项目A`。
 5. **附件链接语法（实测踩坑：AI 插的图片在 Obsidian 里不显示）**：指向非 .md 文件的双链/embed **必须带扩展名**（`[[xxx.png]]`，省略扩展名会解析失败显示为断链）；图片要内联显示必须用 embed 感叹号语法 `![[...]]`，普通 `[[...]]` 只是文字链。最稳写法是 vault 全路径：`![[98 附件/截图.png]]`。`.html` 等不受支持的文件**永远不要用双链**（默认设置下解析不了），用纯文本提及文件名。
+6. **`obsidian backlinks` 结果不可靠**（对日记文件常返回空，file= 和 path= 表现不一致）→ 验证链接关系用 eval 直查活索引：`obsidian eval code="JSON.stringify(Object.entries(app.metadataCache.resolvedLinks).filter(function(e){return e[1]['10 Calendar/2026-09-03.md']}).map(function(e){return e[0]}))"`，磁盘上有没有链接文本用 grep/Grep 工具复核。
+7. **`obsidian search` 的 query 里不能含 `[[`**（报 "Property cannot be nested within a property"）→ 搜链接文本时去掉方括号只搜里面的词。
 
-整理完成的三件套：① 打标签（改 frontmatter tags 列表）② processed: true（改 frontmatter）③ 建卡 + 挂 MOC（上面命令）。
+### 双链怎么落地（重要：写显式动作，不要只靠卡片模板隐式完成）
+
+Obsidian 的双链 = **一处出链 + 自动反链**：卡片正文写了 `[[某笔记]]`，某笔记的反向链接面板就会自动显示这张卡片，双向关系即建立，不需要两边都写。但要保证三个**显式动作**：
+
+1. **卡片出链**：建卡时正文必须含 `[[本篇日记日期]]` 指回日记 + `[[相关存量文件]]` 指向资料（若有）
+2. **MOC 挂载**：append 让地图能走到卡片（上面命令）
+3. **日记加指针**：在日记对应条目（那个待办、那句想法）后面追加 `[[卡片名]]`，让读日记的人正向可见、可跳转
+
+整理完成的四件套：① 打标签（frontmatter tags 列表）② 建卡 + 挂 MOC ③ 日记对应条目追加 `[[卡片名]]` 指针 ④ processed: true。
 
 ## 建卡标准（什么值得变成卡片）
 
