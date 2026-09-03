@@ -1,10 +1,10 @@
 ---
 name: diary-gardener
-description: 整理 Obsidian 日记的日常技能。读取日记 → 按白名单打标签 → 提炼知识卡片 → 挂 MOC → 建双链 → 规整待办 → 幂等标记。触发词：整理日记、整理昨天的日记、日记加工、处理日记、周回顾、weekly review、整理 Inbox。Use when the user asks to process/organize their Obsidian daily notes, do a weekly review of their vault, or tidy the 00 Inbox folder.
+description: 整理 Obsidian 日记的日常技能，可自动初始化笔记库结构（四区目录+使用说明+日记模板）。读取日记 → 按白名单打标签 → 提炼知识卡片 → 挂 MOC → 建双链 → 规整待办 → 幂等标记。触发词：初始化笔记库、init vault、整理日记、整理昨天的日记、日记加工、处理日记、周回顾、weekly review、整理 Inbox。Use when the user asks to initialize/set up their Obsidian vault structure, process/organize their Obsidian daily notes, do a weekly review of their vault, or tidy the 00 Inbox folder.
 license: MIT
 metadata:
   author: assddd81
-  version: 1.1.0
+  version: 1.2.0
   created: 2026-09-03
   last_reviewed: 2026-09-03
   review_interval_days: 90
@@ -32,11 +32,24 @@ metadata:
 
 附件与产物放置规则：**随手粘贴的截图/图片放 `98 附件/`**（系统默认落点，不挪动）；**项目交付物（配图源文件、JSON 规范、HTML 产物、脚本代码）留在所属项目文件夹**，与内容同目录，保证项目自包含。往笔记里插图必须用真 embed：`![[98 附件/文件名.png]]` 或 `![[30 Efforts/项目/xxx/产物.png]]`（全路径最稳）。
 
-## 标签白名单（先读 vault 里的「📖 使用说明（人与AI分工）」第六节，以那里为准）
+## 标签白名单
 
-`#会议` `#项目/<名>` `#人名（如 #张总）` `#想法` `#待办` `#资料` `#领域`
+优先读 vault 根目录的「📖 使用说明（人与AI分工）」第六节（**存在则以它为准**）。该文档不存在（新用户、未初始化的 vault）时，使用以下内置默认：
 
-只从白名单选标签；需要新标签时先向用户提议，确认后同时更新使用说明第六节。
+`#会议` `#项目/<名>` `#人名（如 #张总）` `#想法` `#待办` `#资料` `#生活` `#领域`
+
+只从白名单选标签；需要新标签时先向用户提议，确认后同时更新使用说明第六节——若该文档尚不存在，先按 `assets/` 模板创建（见初始化流程）。
+
+## 初始化流程（触发：「初始化笔记库」「init vault」——新 vault 首次使用时）
+
+本技能依赖四区目录和使用说明文档；检测到缺失时主动建议用户执行本流程：
+
+1. **检测**：vault 根目录是否已有 `00 Inbox`、`10 Calendar`、`20 Atlas/卡片`、`20 Atlas/MOC`、`30 Efforts`、`40 Archive`、`90 Templates`、`98 附件` 和「📖 使用说明（人与AI分工）.md」
+2. **建目录**：缺失的文件夹用 mkdir 创建（磁盘操作即可，Obsidian 自动识别）
+3. **部署文档**：把本技能 `assets/使用说明（模板）.md` 复制为 vault 根目录「📖 使用说明（人与AI分工）.md」；`assets/日记模板（模板）.md` 复制为 `90 Templates/日记模板.md`
+4. **（可选，问用户）配置 daily-notes 核心插件**：把 `<VAULT>/.obsidian/daily-notes.json` 写为 `{"folder":"10 Calendar","format":"YYYY-MM-DD","template":"90 Templates/日记模板.md"}`，`.obsidian/app.json` 的 `attachmentFolderPath` 改为 `"98 附件"`，然后 `obsidian restart` 生效
+5. **存量文件一律不动**；若 vault 已有大量旧笔记，提示用户以后可另行让 AI 做分区迁移
+6. 汇报创建了什么，并演示：往今日日记写一句，然后说「整理日记」跑通全流程
 
 ## 整理日记流程（触发：「整理日记」「整理昨天的日记」「整理 2026-09-01 的日记」）
 

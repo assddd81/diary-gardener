@@ -47,6 +47,16 @@ cp -r diary-gardener/skills/diary-gardener ~/.claude/skills/
 npx skills add assddd81/diary-gardener
 ```
 
+### 装好之后：一句话初始化（重要）
+
+对 Claude Code 说「**初始化笔记库**」，技能会自动：
+
+- 创建目录结构（`00 Inbox` / `10 Calendar` / `20 Atlas` / `30 Efforts` / `40 Archive` / `90 Templates` / `98 附件`）
+- 生成《📖 使用说明（人与AI分工）》——标签体系、人机分工都在里面
+- 部署结构化日记模板（可选自动配置 daily-notes 插件指向新目录）
+
+已有笔记库也不用担心：**存量文件一律不动**。
+
 ## 前置要求
 
 1. [Obsidian](https://obsidian.md) **1.13+**（内置官方 CLI）
@@ -56,7 +66,7 @@ npx skills add assddd81/diary-gardener
 
 ## 推荐目录结构
 
-技能默认假设以下结构（可在 SKILL.md 里改成你自己的）：
+说「初始化笔记库」会自动创建以下结构（也可以在 SKILL.md 里改成你自己的）：
 
 ```
 你的笔记库/
